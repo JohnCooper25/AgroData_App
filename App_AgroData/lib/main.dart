@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'Pages/Home.dart';
+import 'Pages/home.dart';
+import 'Pages/new_Harvest.dart';
+import 'Pages/profile.dart';
+import 'Pages/splash.dart';
 
 void main() {
   runApp(const MyApp());
