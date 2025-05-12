@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/Pages/profile.dart';
 
-
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
 
@@ -47,9 +46,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Center(child: _widgetOptions[_selectedIndex]),
       drawer: Drawer(
-        // Add a ListView to the drawer. This ensures the user can scroll
-        // through the options in the drawer if there isn't enough vertical
-        // space to fit everything.
+       
         child: ListView(
           // Important: Remove any padding from the ListView.
           padding: EdgeInsets.zero,
