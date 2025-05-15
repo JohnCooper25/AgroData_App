@@ -26,8 +26,8 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     ),
   ),
-    Text('Index 1: Profile', style: optionStyle),
-    Text('Index 2: New Harvest', style: optionStyle),
+    Text('Index 1: Perfil de Usuario', style: optionStyle),
+    Text('Index 2: Nueva Cosecha', style: optionStyle),
   ];
 
   void _onItemTapped(int index) {
@@ -56,7 +56,7 @@ class _MyHomePageState extends State<MyHomePage> {
       drawer: Drawer(
        
         child: ListView(
-          // Important: Remove any padding from the ListView.
+          
           padding: EdgeInsets.zero,
           children: [
             const DrawerHeader(
@@ -74,7 +74,7 @@ class _MyHomePageState extends State<MyHomePage> {
               },
             ),
             ListTile(
-              title: const Text('Profile'),
+              title: const Text('Perfil de Usuario'),
               selected: _selectedIndex == 1,
               onTap: () {
 
@@ -83,7 +83,7 @@ class _MyHomePageState extends State<MyHomePage> {
               },
             ),
             ListTile(
-              title: const Text('New Harvest'),
+              title: const Text('Nueva Cosecha'),
               selected: _selectedIndex == 2,
               onTap: () {
                

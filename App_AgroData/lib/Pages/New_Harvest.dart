@@ -19,6 +19,23 @@ class _MyNew_HarvestState extends State<MyNew_HarvestPage> {
   final TextEditingController _peopleCountController = TextEditingController();
   final TextEditingController _crewCountController = TextEditingController();
   final TextEditingController _binsCountController = TextEditingController();
+  final TextEditingController _dateController = TextEditingController();
+  DateTime? _selectedDate;
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null) {
+      setState(() {
+        _selectedDate = picked;
+        _dateController.text = "${picked.day}/${picked.month}/${picked.year}";
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,8 +51,11 @@ class _MyNew_HarvestState extends State<MyNew_HarvestPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Dropdown para fruta
-              const Text("Selecciona la fruta:", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              
+              const Text(
+                "Selecciona la fruta:",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
               DropdownButton<String>(
                 value: _selectedFruit,
                 onChanged: (String? newValue) {
@@ -52,52 +72,67 @@ class _MyNew_HarvestState extends State<MyNew_HarvestPage> {
               ),
               const SizedBox(height: 16),
 
-              // Campo: Variedad
+              
               TextFormField(
                 controller: _varietyController,
                 decoration: const InputDecoration(labelText: 'Nombre de la variedad'),
               ),
 
-              // Campo: Código de huerto
+              
               TextFormField(
                 controller: _orchardCodeController,
                 decoration: const InputDecoration(labelText: 'Código de huerto'),
               ),
 
-              // Campo: Contratista
+              
               TextFormField(
                 controller: _contractorController,
                 decoration: const InputDecoration(labelText: 'Contratista'),
               ),
 
-              // Campo: Cantidad de gente
+              
               TextFormField(
                 controller: _peopleCountController,
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(labelText: 'Cantidad de gente'),
               ),
 
-              // Campo: Cantidad de cuadrillas
+             
               TextFormField(
                 controller: _crewCountController,
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(labelText: 'Cantidad de cuadrillas'),
               ),
 
-              // Campo: Bins cosechados
+              
               TextFormField(
                 controller: _binsCountController,
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(labelText: 'Total de bins cosechados'),
               ),
 
-              const SizedBox(height: 20),
-              // Botón opcional
+              const SizedBox(height: 16),
+
+              
+              TextFormField(
+                controller: _dateController,
+                readOnly: true,
+                onTap: () => _selectDate(context),
+                decoration: const InputDecoration(
+                  labelText: 'Fecha de cosecha',
+                  prefixIcon: Icon(Icons.calendar_today),
+                  border: OutlineInputBorder(),
+                ),
+              ),
+
+              const SizedBox(height: 24),
+
+             
               Center(
                 child: ElevatedButton(
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
-                      // Puedes guardar o enviar los datos aquí
+                      
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text('✅ Registro exitoso'),
