@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'Pages/home.dart';
-import 'Pages/new_Harvest.dart';
-import 'Pages/profile.dart';
-import 'Pages/splash.dart ';
+import 'pages/splash.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,17 +8,15 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Agro_Data',
+      title: 'AgroData',
       theme: ThemeData(
-       
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        fontFamily: 'Merriweather',
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 71, 222, 96)),
       ),
-      home: const MyHomePage(title: 'AgroData'),
+      home: const MySplashPage(), 
     );
   }
 }
-

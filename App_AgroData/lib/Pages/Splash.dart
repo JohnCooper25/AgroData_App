@@ -1,58 +1,45 @@
 import 'package:flutter/material.dart';
+import 'home.dart'; // Asegúrate de importar home.dart correctamente
 
 class MySplashPage extends StatefulWidget {
-  const MySplashPage({super.key, required this.title});
-
-  
-
-  final String title;
+  const MySplashPage({super.key});
 
   @override
-  State<MySplashPage> createState() => _MySplashState();
-
-  
+  State<MySplashPage> createState() => _MySplashPageState();
 }
 
+class _MySplashPageState extends State<MySplashPage> {
+  @override
+  void initState() {
+    super.initState();
 
-class _MySplashState extends State<MySplashPage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-    
-      _counter++;
+    // Esperar 3 segundos y navegar a la pantalla Home
+    Future.delayed(const Duration(seconds: 3), () {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => const MyHomePage(title: 'AgroData'),
+        ),
+      );
     });
   }
 
   @override
-  Widget build(BuildContext context) {
-   
-    return Scaffold(
-      appBar: AppBar(
-        
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-       
-        title: Text(widget.title),
+Widget build(BuildContext context) {
+  return Scaffold(
+    body: Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image.asset(
+            'assets/icons/icon.png',
+            width: 120,
+            height: 120,
+          ),
+          const SizedBox(height: 20),
+          const CircularProgressIndicator(),
+        ],
       ),
-      body: Center(
-        
-        child: Column(
-         
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ),
-    );
-  }
+    ),
+  );
+}
 }
