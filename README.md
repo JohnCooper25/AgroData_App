@@ -1,11 +1,16 @@
-# *AgroData*
+# flutter_application_1
 
-## ***Descripcion***:
+A new Flutter project.
 
-### AgroData, es una aplicacion diseñada para el registro de datos en cosechas de diversas frutas. Es decir, su implementacion aunque aun basica esta enfocada en un campo agricola.
+## Getting Started
 
-## Lista de Caracteristicas
+This project is a starting point for a Flutter application.
 
-## Lista de Funcionalidades mas Relevantes
+A few resources to get you started if this is your first Flutter project:
 
-## Links y Material de Acceso
+- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
+- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+
+For help getting started with Flutter development, view the
+[online documentation](https://docs.flutter.dev/), which offers tutorials,
+samples, guidance on mobile development, and a full API reference.
