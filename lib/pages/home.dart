@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/Pages/New_Harvest.dart';
-import 'package:flutter_application_1/Pages/profile.dart';
+import 'new_Harvest.dart';
+import 'profile.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'pages/splash.dart';
+import 'theme.dart';
+import 'pages/home.dart';
+
+
 
 void main() {
   runApp(const MyApp());
@@ -12,11 +15,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'AgroData',
-      theme: ThemeData(
-        fontFamily: 'Merriweather',
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 71, 222, 96)),
-      ),
-      home: const MySplashPage(), 
+      theme: MaterialTheme(ThemeData.dark().textTheme).dark(),
+      home: const MyHomePage(title: 'AgroData'), 
     );
   }
 }
