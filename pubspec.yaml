@@ -28,6 +28,7 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  connectivity_plus: ^5.0.2
   flutter:
     sdk: flutter
   # The following adds the Cupertino Icons font to your application.
@@ -57,10 +58,10 @@ flutter:
     - assets/backgrounds/background_home.png
 
   fonts:
-    - family: Merriweather
+    - family: MerriweatherItalic
       fonts:
         - asset: assets/fonts/Merriweather_italic.ttf
-          weight: 700  
+ 
   
 
   # An image asset can refer to one or more resolution-specific "variants", see

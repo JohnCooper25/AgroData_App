@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'AgroData',
-      theme: MaterialTheme(ThemeData.dark().textTheme).dark(),
+      theme: MaterialTheme().dark(),
       home: const MyHomePage(title: 'AgroData'), 
     );
   }
