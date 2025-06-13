@@ -1,21 +1,4 @@
-# flutter_application_1
 
-A new Flutter project.
-
-<<<<<<< HEAD
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-=======
 ### AgroData, es una aplicacion diseñada para el registro de datos en cosechas de diversas frutas. Es decir, su implementacion aunque aun basica esta enfocada en un campo agricola. Por lo cual su diseño esta ambientado en tematica de colores asociados a la agricultura, verdes, tonos amarillos etc. En su interfaz podemos encontrarnos con una pantalla de carga, para posteriormente dirigirse al home de bienvenida. El cual esta compuesto de un fondo y una barra de navegacion. Esta misma esta realizada mediante un drawer en flutter en el cual contamos con un navigator.push con el caul nos vamos a dirigir a las diferentes pantallas disponibles en la app.
 
 ### Entre ellas tenemos Perfil, Un centro con los datos del usuario ya sean nombre, huerto en que trabaja, numero de telefono. Este ultimo debe de ser registrado por el usuario. Luego tenemos Nueva Cosecha, dicha pantalla nos entrega banners para rellenar informacion para recopilacion de datos en la jornada laboral. Estos datos son fruta a cosechar, variedad de fruta, contratista, cantidad de personas, cantidad de cuadrillas formadas, total de bins cosechados, fecha de la cosecha. Con todos estos datos se espera poder trabajar en otra pantalla que almacene los registros y poder crear informes a partir de dicha informacion.  
