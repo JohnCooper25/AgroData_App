@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/Pages/New_Harvest.dart';
-import 'package:flutter_application_1/Pages/profile.dart';
+import 'new_Harvest.dart';
+import 'profile.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
+
+Future<bool> checkInternetConnection() async {
+  var connectivityResult = await Connectivity().checkConnectivity();
+  return connectivityResult != ConnectivityResult.none;
+}
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -10,6 +16,8 @@ class MyHomePage extends StatefulWidget {
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
+
+
 
 class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
@@ -26,7 +34,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     ),
   ),
-    Text('Index 1: Perfil', style: optionStyle),
+    Text('Index 1: Perfil de Usuario', style: optionStyle),
     Text('Index 2: Nueva Cosecha', style: optionStyle),
   ];
 
@@ -38,6 +46,22 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final colorScheme = Theme.of(context).colorScheme;
+
+    final List<Widget> _widgetOptions = <Widget>[
+      Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/backgrounds/background_home.png'),
+            fit: BoxFit.fill,
+          ),
+        ),
+      ),
+      Text('Index 1: Perfil de Usuario', style: textTheme.headlineMedium),
+      Text('Index 2: Nueva Cosecha', style: textTheme.headlineMedium),
+    ];
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -54,22 +78,25 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Center(child: _widgetOptions[_selectedIndex]),
       drawer: Drawer(
-       
         child: ListView(
-          
           padding: EdgeInsets.zero,
           children: [
-            const DrawerHeader(
-              decoration: BoxDecoration(color: Color.fromARGB(255, 123, 200, 126)),
-              child: Text('Menu'),
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: colorScheme.primaryContainer,
+              ),
+              child: Text(
+                'Menu',
+                style: textTheme.headlineSmall?.copyWith(
+                  color: colorScheme.onPrimaryContainer,
+                ),
+              ),
             ),
             ListTile(
               title: const Text('Home'),
               selected: _selectedIndex == 0,
               onTap: () {
-                
                 _onItemTapped(0);
-               
                 Navigator.pop(context);
               },
             ),
@@ -77,19 +104,24 @@ class _MyHomePageState extends State<MyHomePage> {
               title: const Text('Perfil de Usuario'),
               selected: _selectedIndex == 1,
               onTap: () {
-
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const MyProfilePage(title: 'Profile')));  
-                
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const MyProfilePage(title: 'Profile'),
+                  ),
+                );
               },
             ),
             ListTile(
               title: const Text('Nueva Cosecha'),
               selected: _selectedIndex == 2,
               onTap: () {
-               
-               Navigator.push(context, MaterialPageRoute(builder: (context) => const MyNew_HarvestPage(title: 'New Harvest')));  
-               
-                
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const MyNew_HarvestPage(title: 'New Harvest'),
+                  ),
+                );
               },
             ),
           ],
