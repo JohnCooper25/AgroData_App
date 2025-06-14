@@ -1,4 +1,4 @@
-package cl.dataagro.agrodata
+package cl.jcatalan.agrodata
 
 import io.flutter.embedding.android.FlutterActivity
 
