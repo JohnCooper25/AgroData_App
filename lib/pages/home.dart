@@ -26,7 +26,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     ),
   ),
-    Text('Index 1: Perfil de Usuario', style: optionStyle),
+    Text('Index 1: Perfil', style: optionStyle),
     Text('Index 2: Nueva Cosecha', style: optionStyle),
   ];
 
