@@ -34,6 +34,26 @@ class RegistrosPageState extends State<RegistrosPage> {
     }
   }
 
+  Future<void> _saveCosechas() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String encoded = jsonEncode(_cosechas);
+    await prefs.setString('cosechas', encoded);
+  }
+
+  void _updateCosecha(Map<String, dynamic> editedCosecha) {
+    final index = _cosechas.indexWhere((c) =>
+      c['fruta'] == editedCosecha['fruta'] &&  // o algún identificador único si tienes
+      c['fecha'] == editedCosecha['fecha'] // Esto es para tratar de identificar el registro
+    );
+
+    if (index != -1) {
+      setState(() {
+        _cosechas[index] = editedCosecha;
+      });
+      _saveCosechas();
+    }
+  }
+
   Widget _buildCosechasList() {
     if (_cosechas.isEmpty) {
       return const Center(child: Text('No hay registros de cosechas'));
@@ -52,7 +72,12 @@ class RegistrosPageState extends State<RegistrosPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => HarvestDetailPage(cosecha: cosecha),
+                  builder: (_) => HarvestDetailPage(
+                    cosecha: cosecha,
+                    onUpdate: (editedCosecha) {
+                      _updateCosecha(editedCosecha);
+                    },
+                  ),
                 ),
               );
             },

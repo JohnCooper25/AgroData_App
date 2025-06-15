@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 
 class HarvestForm extends StatefulWidget {
   final void Function(Map<String, dynamic>) onSave;
+  final Map<String, dynamic>? initialData; // <-- Nuevo parámetro opcional
 
-  const HarvestForm({super.key, required this.onSave});
+  const HarvestForm({super.key, required this.onSave, this.initialData});
 
   @override
   State<HarvestForm> createState() => _HarvestFormState();
@@ -12,15 +13,32 @@ class HarvestForm extends StatefulWidget {
 class _HarvestFormState extends State<HarvestForm> {
   final _formKey = GlobalKey<FormState>();
 
-  String _selectedFruit = 'Ciruela';
-  final TextEditingController _varietyController = TextEditingController();
-  final TextEditingController _orchardCodeController = TextEditingController();
-  final TextEditingController _contractorController = TextEditingController();
-  final TextEditingController _peopleCountController = TextEditingController();
-  final TextEditingController _crewCountController = TextEditingController();
-  final TextEditingController _binsCountController = TextEditingController();
-  final TextEditingController _dateController = TextEditingController();
+  late String _selectedFruit;
+  late TextEditingController _varietyController;
+  late TextEditingController _orchardCodeController;
+  late TextEditingController _contractorController;
+  late TextEditingController _peopleCountController;
+  late TextEditingController _crewCountController;
+  late TextEditingController _binsCountController;
+  late TextEditingController _dateController;
   DateTime? _selectedDate;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Si hay datos iniciales, precargarlos; sino valores por defecto
+    _selectedFruit = widget.initialData?['fruta']?.toString().replaceAll(' (editado)', '') ?? 'Ciruela';
+    _varietyController = TextEditingController(text: widget.initialData?['variedad'] ?? '');
+    _orchardCodeController = TextEditingController(text: widget.initialData?['codigoHuerto'] ?? '');
+    _contractorController = TextEditingController(text: widget.initialData?['contratista'] ?? '');
+    _peopleCountController = TextEditingController(text: widget.initialData?['cantidadGente'] ?? '');
+    _crewCountController = TextEditingController(text: widget.initialData?['cantidadCuadrillas'] ?? '');
+    _binsCountController = TextEditingController(text: widget.initialData?['totalBins'] ?? '');
+    _dateController = TextEditingController(text: widget.initialData?['fecha'] ?? '');
+
+    // Opcional: Si quieres parsear la fecha inicial para _selectedDate, se puede agregar aquí.
+  }
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
