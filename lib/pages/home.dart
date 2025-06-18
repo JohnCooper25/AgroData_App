@@ -136,9 +136,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: SizedBox(
                     width: 400,
                     child: MaintenanceForm(
-                      onSave: _saveMaintenance,
-                      initialData: {},
-                    ),
+                    onSave: _saveMaintenance,
+                    initialData: {},
+                    marca: _selectedMarca,
+                  ),
                   ),
                 ),
               ),

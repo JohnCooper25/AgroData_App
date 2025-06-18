@@ -33,6 +33,7 @@ class _MaintenanceDetailPageState extends State<MaintenanceDetailPage> {
             Navigator.of(context).pop(editedData);
           },
           initialData: _mantencionEditable,
+          marca: _mantencionEditable['marca'] ?? '', // Usa la marca guardada si existe
         ),
       ),
     );
