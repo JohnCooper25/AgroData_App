@@ -9,7 +9,6 @@ import 'package:AgroData/harvest_form.dart';
 import 'registration.dart';
 import 'profile.dart';
 
-
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
   final String title;
@@ -46,17 +45,23 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> _saveMaintenance(Map<String, dynamic> newMaintenance) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? existing = prefs.getString('mantenciones');
-    List<dynamic> mantenciones = existing != null ? jsonDecode(existing) : [];
-    mantenciones.add(newMaintenance);
-    await prefs.setString('mantenciones', jsonEncode(mantenciones));
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String? existing = prefs.getString('mantenciones');
+  List<dynamic> mantenciones = existing != null ? jsonDecode(existing) : [];
 
-    setState(() {
-      _showMaintenanceForm = false;
-      _selectedIndex = 0;
-    });
-  }
+  newMaintenance['marca'] = _selectedMarca;
+  newMaintenance['uuid'] ??= DateTime.now().millisecondsSinceEpoch.toString();
+
+  print('Guardando mantención: $newMaintenance');  // DEBUG
+
+  mantenciones.add(newMaintenance);
+  await prefs.setString('mantenciones', jsonEncode(mantenciones));
+
+  setState(() {
+    _showMaintenanceForm = false;
+    _selectedMarca = '';
+  });
+}
 
   void _navigateToFruta(String fruta) {
     Navigator.pop(context);
@@ -71,7 +76,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
- void _navigateToMarca(String marca) {
+  void _navigateToMarca(String marca) {
   Navigator.pop(context);
   Navigator.push(
     context,
@@ -80,7 +85,6 @@ class _MyHomePageState extends State<MyHomePage> {
     ),
   );
 }
-
 
   @override
   Widget build(BuildContext context) {
@@ -112,6 +116,18 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Stack(
         children: [
           Center(child: _widgetOptions[_selectedIndex]),
+          if (_showHarvestForm)
+            Positioned.fill(
+              child: Container(
+                color: Colors.black54,
+                child: Center(
+                  child: SizedBox(
+                    width: 400,
+                    child: HarvestForm(onSave: _saveHarvest),
+                  ),
+                ),
+              ),
+            ),
           if (_showMaintenanceForm)
             Positioned.fill(
               child: Container(
@@ -121,21 +137,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     width: 400,
                     child: MaintenanceForm(
                       onSave: _saveMaintenance,
-                      marca: _selectedMarca, initialData: {},
+                      initialData: {},
                     ),
-                  ),
-                ),
-              ),
-            ),
-
-          if (_showMaintenanceForm)
-            Positioned.fill(
-              child: Container(
-                color: Colors.black54,
-                child: Center(
-                  child: SizedBox(
-                    width: 400,
-                    child: MaintenanceForm(onSave: _saveMaintenance, initialData: {}, marca: '',),
                   ),
                 ),
               ),
@@ -192,31 +195,18 @@ class _MyHomePageState extends State<MyHomePage> {
                   ],
                 ),
                 ExpansionTile(
-                title: const Text('Mantenciones'),
-                children: [
-                  ListTile(
-                    title: const Text('Nueva mantención Deutz Fahr'),
-                    onTap: () {
-                      Navigator.pop(context);
-                      setState(() {
-                        _showMaintenanceForm = true;
-                        _selectedMarca = 'Deutz Fahr';
-                      });
-                    },
-                  ),
-                  ListTile(
-                    title: const Text('Nueva mantención Kubota'),
-                    onTap: () {
-                      Navigator.pop(context);
-                      setState(() {
-                        _showMaintenanceForm = true;
-                        _selectedMarca = 'Kubota';
-                      });
-                    },
-                  ),
-                ],
-              ),
-
+                  title: const Text('Mantenciones'),
+                  children: [
+                    ListTile(
+                      title: const Text('Deutz Fahr'),
+                      onTap: () => _navigateToMarca('Deutz Fahr'),
+                    ),
+                    ListTile(
+                      title: const Text('Kubota'),
+                      onTap: () => _navigateToMarca('Kubota'),
+                    ),
+                  ],
+                ),
               ],
             ),
           ],
@@ -241,28 +231,16 @@ class _MyHomePageState extends State<MyHomePage> {
                               });
                             },
                           ),
-                          ExpansionTile(
-                            title: const Text('Mantenciones'),
-                            children: [
-                              ListTile(
-                                title: const Text('Deutz Fahr'),
-                                onTap: () {
-                                  Navigator.pop(context);
-                                  setState(() {
-                                    _showMaintenanceForm = true;
-                                  });
-                                },
-                              ),
-                              ListTile(
-                                title: const Text('Kubota'),
-                                onTap: () {
-                                  Navigator.pop(context);
-                                  setState(() {
-                                    _showMaintenanceForm = true;
-                                  });
-                                },
-                              ),
-                            ],
+                          ListTile(
+                            leading: const Icon(Icons.build),
+                            title: const Text('Nueva Mantención'),
+                            onTap: () {
+                              Navigator.pop(context);
+                              setState(() {
+                                _selectedMarca = '';
+                                _showMaintenanceForm = true;
+                              });
+                            },
                           ),
                         ],
                       ),

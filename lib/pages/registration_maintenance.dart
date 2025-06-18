@@ -23,16 +23,18 @@ class _RegistrosMantencionesPageState extends State<RegistrosMantencionesPage> {
   }
 
   Future<void> _loadMantenciones() async {
-    final prefs = await SharedPreferences.getInstance();
-    final String? data = prefs.getString('mantenciones');
-    if (data != null) {
-      final List<dynamic> decoded = jsonDecode(data);
-      final all = List<Map<String, dynamic>>.from(decoded);
-      setState(() {
-        _mantenciones = all.where((m) => m['marca'] == widget.marca).toList();
-      });
-    }
+  final prefs = await SharedPreferences.getInstance();
+  final String? data = prefs.getString('mantenciones');
+  if (data != null) {
+    final List<dynamic> decoded = jsonDecode(data);
+    final all = List<Map<String, dynamic>>.from(decoded);
+    print('Todos los registros: $all'); // DEBUG
+    setState(() {
+      _mantenciones = all.where((m) => m['marca'] == widget.marca).toList();
+      print('Registros filtrados para marca ${widget.marca}: $_mantenciones'); // DEBUG
+    });
   }
+}
 
   Future<void> _saveMantenciones(List<Map<String, dynamic>> newList) async {
     final prefs = await SharedPreferences.getInstance();
@@ -56,7 +58,12 @@ class _RegistrosMantencionesPageState extends State<RegistrosMantencionesPage> {
         title: Text('Mantenciones ${widget.marca}'),
       ),
       body: _mantenciones.isEmpty
-          ? const Center(child: Text('No hay registros disponibles'))
+          ? const Center(
+              child: Text(
+                'No hay registros disponibles',
+                style: TextStyle(fontSize: 18, color: Colors.grey),
+              ),
+            )
           : ListView.builder(
               itemCount: _mantenciones.length,
               itemBuilder: (context, index) {

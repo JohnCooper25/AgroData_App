@@ -32,7 +32,7 @@ class _MaintenanceDetailPageState extends State<MaintenanceDetailPage> {
           onSave: (editedData) {
             Navigator.of(context).pop(editedData);
           },
-          initialData: _mantencionEditable, marca: '',
+          initialData: _mantencionEditable,
         ),
       ),
     );
