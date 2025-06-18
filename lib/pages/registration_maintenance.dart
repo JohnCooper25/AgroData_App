@@ -23,18 +23,18 @@ class _RegistrosMantencionesPageState extends State<RegistrosMantencionesPage> {
   }
 
   Future<void> _loadMantenciones() async {
-  final prefs = await SharedPreferences.getInstance();
-  final String? data = prefs.getString('mantenciones');
-  if (data != null) {
-    final List<dynamic> decoded = jsonDecode(data);
-    final all = List<Map<String, dynamic>>.from(decoded);
-    print('Todos los registros: $all'); // DEBUG
-    setState(() {
-      _mantenciones = all.where((m) => m['marca'] == widget.marca).toList();
-      print('Registros filtrados para marca ${widget.marca}: $_mantenciones'); // DEBUG
-    });
+    final prefs = await SharedPreferences.getInstance();
+    final String? data = prefs.getString('mantenciones');
+    if (data != null) {
+      final List<dynamic> decoded = jsonDecode(data);
+      final all = List<Map<String, dynamic>>.from(decoded);
+      print('Todos los registros: $all'); // DEBUG
+      setState(() {
+        _mantenciones = all.where((m) => m['marca'] == widget.marca).toList();
+        print('Registros filtrados para marca ${widget.marca}: $_mantenciones'); // DEBUG
+      });
+    }
   }
-}
 
   Future<void> _saveMantenciones(List<Map<String, dynamic>> newList) async {
     final prefs = await SharedPreferences.getInstance();
@@ -48,6 +48,34 @@ class _RegistrosMantencionesPageState extends State<RegistrosMantencionesPage> {
         _mantenciones[index] = updated;
       });
       _saveMantenciones([..._mantenciones]);
+    }
+  }
+
+  Future<void> _deleteMantencion(String uuid) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Confirmar eliminación'),
+        content: const Text('¿Está seguro que desea eliminar este registro de mantención?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Eliminar', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm == true) {
+      setState(() {
+        _mantenciones.removeWhere((m) => m['uuid'] == uuid);
+      });
+      await _saveMantenciones(_mantenciones);
+      await _loadMantenciones();
     }
   }
 
@@ -73,6 +101,11 @@ class _RegistrosMantencionesPageState extends State<RegistrosMantencionesPage> {
                   child: ListTile(
                     title: Text('${m['modelo'] ?? 'Modelo desconocido'}'),
                     subtitle: Text('Código: ${m['codigo'] ?? '-'}'),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.delete, color: Colors.red),
+                      tooltip: 'Eliminar registro',
+                      onPressed: () => _deleteMantencion(m['uuid']),
+                    ),
                     onTap: () {
                       Navigator.push(
                         context,

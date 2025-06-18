@@ -39,11 +39,11 @@ class RegistrosPageState extends State<RegistrosPage> {
       List<Map<String, dynamic>> allCosechas = List<Map<String, dynamic>>.from(decoded);
       setState(() {
         _cosechas = widget.frutaFiltrada != null
-          ? allCosechas.where((c) {
-              final frutaSinEditado = c['fruta']?.toString().replaceAll(' (editado)', '') ?? '';
-              return frutaSinEditado == widget.frutaFiltrada;
-            }).toList()
-          : allCosechas;
+            ? allCosechas.where((c) {
+                final frutaSinEditado = c['fruta']?.toString().replaceAll(' (editado)', '') ?? '';
+                return frutaSinEditado == widget.frutaFiltrada;
+              }).toList()
+            : allCosechas;
       });
     } else {
       setState(() {
@@ -59,16 +59,42 @@ class RegistrosPageState extends State<RegistrosPage> {
   }
 
   void _updateCosecha(Map<String, dynamic> editedCosecha) {
-  final index = _cosechas.indexWhere((c) => c['uuid'] == editedCosecha['uuid']);
-  if (index != -1) {
-    setState(() {
-      //editedCosecha['editado'] = true;
-      _cosechas[index] = editedCosecha;
-    });
-    _saveCosechas().then((_) => _loadCosechas());  // Recarga la lista
+    final index = _cosechas.indexWhere((c) => c['uuid'] == editedCosecha['uuid']);
+    if (index != -1) {
+      setState(() {
+        _cosechas[index] = editedCosecha;
+      });
+      _saveCosechas().then((_) => _loadCosechas());
+    }
   }
-}
 
+  Future<void> _deleteCosecha(String uuid) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Confirmar eliminación'),
+        content: const Text('¿Está seguro que desea eliminar este registro?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Eliminar', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm == true) {
+      setState(() {
+        _cosechas.removeWhere((c) => c['uuid'] == uuid);
+      });
+      await _saveCosechas();
+      await _loadCosechas();
+    }
+  }
 
   Widget _buildCosechasList() {
     if (_cosechas.isEmpty) {
@@ -83,16 +109,20 @@ class RegistrosPageState extends State<RegistrosPage> {
           child: ListTile(
             title: Text(
               '${cosecha['fruta'] ?? 'Fruta desconocida'}' +
-              (cosecha['editado'] == true ? ' (editado)' : ''),
+                  (cosecha['editado'] == true ? ' (editado)' : ''),
             ),
             subtitle: Text(
               'Variedad: ${cosecha['variedad'] ?? '-'}\n'
               'Fecha: ${cosecha['fecha'] ?? '-'}',
             ),
-          isThreeLine: true,
-
+            isThreeLine: true,
+            trailing: IconButton(
+              icon: const Icon(Icons.delete, color: Colors.red),
+              onPressed: () => _deleteCosecha(cosecha['uuid']),
+              tooltip: 'Eliminar registro',
+            ),
             onTap: () async {
-              Navigator.push(
+              await Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (_) => HarvestDetailPage(
