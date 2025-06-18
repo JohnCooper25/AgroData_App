@@ -57,6 +57,8 @@ flutter:
 
     - assets/icons/icon.png
     - assets/backgrounds/background_home.png
+    - assets/logos/deutz.png
+    - assets/logos/kubota.png
 
   fonts:
     - family: MerriweatherItalic

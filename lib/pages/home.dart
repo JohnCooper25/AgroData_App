@@ -3,11 +3,12 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
-
+import 'registration_maintenance.dart';
+import 'maintenance_form.dart';
 import 'package:AgroData/harvest_form.dart';
 import 'registration.dart';
 import 'profile.dart';
-import 'maintenance_form.dart';
+
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -64,6 +65,19 @@ class _MyHomePageState extends State<MyHomePage> {
         builder: (_) => RegistrosPage(
           title: 'Registros de $fruta',
           frutaFiltrada: fruta,
+        ),
+      ),
+    );
+  }
+
+  void _navigateToMarca(String marca) {
+    Navigator.pop(context);
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => _RegistrosMantencionesPageState(
+          title: 'Mantenciones de $marca',
+          marcaFiltrada: marca,
         ),
       ),
     );
@@ -174,9 +188,18 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   ],
                 ),
-                const ListTile(
-                  title: Text('Mantenciones'),
-                  subtitle: Text('Próximamente...'),
+                ExpansionTile(
+                  title: const Text('Mantenciones'),
+                  children: [
+                    ListTile(
+                      title: const Text('Deutz Fahr'),
+                      onTap: () => _navigateToMarca('Deutz Fahr'),
+                    ),
+                    ListTile(
+                      title: const Text('Kubota'),
+                      onTap: () => _navigateToMarca('Kubota'),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -202,15 +225,28 @@ class _MyHomePageState extends State<MyHomePage> {
                               });
                             },
                           ),
-                          ListTile(
-                            leading: const Icon(Icons.build),
-                            title: const Text('Registro de Mantenciones'),
-                            onTap: () {
-                              Navigator.pop(context);
-                              setState(() {
-                                _showMaintenanceForm = true;
-                              });
-                            },
+                          ExpansionTile(
+                            title: const Text('Mantenciones'),
+                            children: [
+                              ListTile(
+                                title: const Text('Deutz Fahr'),
+                                onTap: () {
+                                  Navigator.pop(context);
+                                  setState(() {
+                                    _showMaintenanceForm = true;
+                                  });
+                                },
+                              ),
+                              ListTile(
+                                title: const Text('Kubota'),
+                                onTap: () {
+                                  Navigator.pop(context);
+                                  setState(() {
+                                    _showMaintenanceForm = true;
+                                  });
+                                },
+                              ),
+                            ],
                           ),
                         ],
                       ),
