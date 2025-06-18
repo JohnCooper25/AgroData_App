@@ -1,3 +1,5 @@
+// home.dart
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
@@ -5,10 +7,10 @@ import 'dart:convert';
 import 'package:AgroData/harvest_form.dart';
 import 'registration.dart';
 import 'profile.dart';
+import 'maintenance_form.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
-
   final String title;
 
   @override
@@ -18,13 +20,13 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
   bool _showHarvestForm = false;
-
-  final GlobalKey<RegistrosPageState> _registrosKey = GlobalKey<RegistrosPageState>();
+  bool _showMaintenanceForm = false;
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
       _showHarvestForm = false;
+      _showMaintenanceForm = false;
     });
   }
 
@@ -39,6 +41,32 @@ class _MyHomePageState extends State<MyHomePage> {
       _showHarvestForm = false;
       _selectedIndex = 0;
     });
+  }
+
+  Future<void> _saveMaintenance(Map<String, dynamic> newMaintenance) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? existing = prefs.getString('mantenciones');
+    List<dynamic> mantenciones = existing != null ? jsonDecode(existing) : [];
+    mantenciones.add(newMaintenance);
+    await prefs.setString('mantenciones', jsonEncode(mantenciones));
+
+    setState(() {
+      _showMaintenanceForm = false;
+      _selectedIndex = 0;
+    });
+  }
+
+  void _navigateToFruta(String fruta) {
+    Navigator.pop(context);
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => RegistrosPage(
+          title: 'Registros de $fruta',
+          frutaFiltrada: fruta,
+        ),
+      ),
+    );
   }
 
   @override
@@ -56,22 +84,16 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       const MyProfilePage(title: 'Perfil de Usuario'),
-      const RegistrosPage(title: 'Registros'),
     ];
 
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
         leading: Builder(
-          builder: (context) {
-            return IconButton(
-              icon: const Icon(Icons.menu),
-              tooltip: 'Abrir Menu',
-              onPressed: () {
-                Scaffold.of(context).openDrawer();
-              },
-            );
-          },
+          builder: (context) => IconButton(
+            icon: const Icon(Icons.menu),
+            onPressed: () => Scaffold.of(context).openDrawer(),
+          ),
         ),
       ),
       body: Stack(
@@ -84,9 +106,19 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: Center(
                   child: SizedBox(
                     width: 400,
-                    child: HarvestForm(
-                      onSave: _saveHarvest,
-                    ),
+                    child: HarvestForm(onSave: _saveHarvest),
+                  ),
+                ),
+              ),
+            ),
+          if (_showMaintenanceForm)
+            Positioned.fill(
+              child: Container(
+                color: Colors.black54,
+                child: Center(
+                  child: SizedBox(
+                    width: 400,
+                    child: MaintenanceForm(onSave: _saveMaintenance),
                   ),
                 ),
               ),
@@ -98,11 +130,9 @@ class _MyHomePageState extends State<MyHomePage> {
           padding: EdgeInsets.zero,
           children: [
             DrawerHeader(
-              decoration: BoxDecoration(
-                color: colorScheme.primaryContainer,
-              ),
+              decoration: BoxDecoration(color: colorScheme.primaryContainer),
               child: Text(
-                'Menu',
+                'Menú',
                 style: textTheme.headlineSmall?.copyWith(
                   color: colorScheme.onPrimaryContainer,
                 ),
@@ -124,18 +154,36 @@ class _MyHomePageState extends State<MyHomePage> {
                 Navigator.pop(context);
               },
             ),
-            ListTile(
+            ExpansionTile(
               title: const Text('Registros'),
-              selected: _selectedIndex == 2,
-              onTap: () {
-                _onItemTapped(2);
-                Navigator.pop(context);
-              },
+              children: [
+                ExpansionTile(
+                  title: const Text('Cosechas'),
+                  children: [
+                    ListTile(
+                      title: const Text('Ciruela'),
+                      onTap: () => _navigateToFruta('Ciruela'),
+                    ),
+                    ListTile(
+                      title: const Text('Pera'),
+                      onTap: () => _navigateToFruta('Pera'),
+                    ),
+                    ListTile(
+                      title: const Text('Naranja'),
+                      onTap: () => _navigateToFruta('Naranja'),
+                    ),
+                  ],
+                ),
+                const ListTile(
+                  title: Text('Mantenciones'),
+                  subtitle: Text('Próximamente...'),
+                ),
+              ],
             ),
           ],
         ),
       ),
-      floatingActionButton: (_selectedIndex == 0 && !_showHarvestForm)
+      floatingActionButton: (_selectedIndex == 0 && !_showHarvestForm && !_showMaintenanceForm)
           ? FloatingActionButton(
               onPressed: () {
                 showModalBottomSheet(
@@ -159,11 +207,9 @@ class _MyHomePageState extends State<MyHomePage> {
                             title: const Text('Registro de Mantenciones'),
                             onTap: () {
                               Navigator.pop(context);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Funcionalidad en mantenciones pendiente'),
-                                ),
-                              );
+                              setState(() {
+                                _showMaintenanceForm = true;
+                              });
                             },
                           ),
                         ],

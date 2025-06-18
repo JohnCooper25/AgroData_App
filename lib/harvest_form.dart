@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class HarvestForm extends StatefulWidget {
   final void Function(Map<String, dynamic>) onSave;
-  final Map<String, dynamic>? initialData; // <-- Nuevo parámetro opcional
+  final Map<String, dynamic>? initialData;
 
   const HarvestForm({super.key, required this.onSave, this.initialData});
 
@@ -23,11 +23,12 @@ class _HarvestFormState extends State<HarvestForm> {
   late TextEditingController _dateController;
   DateTime? _selectedDate;
 
+  late String _uuid; // <-- Nuevo: campo UUID único
+
   @override
   void initState() {
     super.initState();
 
-    // Si hay datos iniciales, precargarlos; sino valores por defecto
     _selectedFruit = widget.initialData?['fruta']?.toString().replaceAll(' (editado)', '') ?? 'Ciruela';
     _varietyController = TextEditingController(text: widget.initialData?['variedad'] ?? '');
     _orchardCodeController = TextEditingController(text: widget.initialData?['codigoHuerto'] ?? '');
@@ -37,7 +38,7 @@ class _HarvestFormState extends State<HarvestForm> {
     _binsCountController = TextEditingController(text: widget.initialData?['totalBins'] ?? '');
     _dateController = TextEditingController(text: widget.initialData?['fecha'] ?? '');
 
-    // Opcional: Si quieres parsear la fecha inicial para _selectedDate, se puede agregar aquí.
+    _uuid = widget.initialData?['uuid'] ?? DateTime.now().millisecondsSinceEpoch.toString(); // <-- Crear si no hay
   }
 
   Future<void> _selectDate(BuildContext context) async {
@@ -56,20 +57,22 @@ class _HarvestFormState extends State<HarvestForm> {
   }
 
   void _saveForm() {
-    if (_formKey.currentState!.validate()) {
-      final cosecha = {
-        'fruta': _selectedFruit,
-        'variedad': _varietyController.text,
-        'codigoHuerto': _orchardCodeController.text,
-        'contratista': _contractorController.text,
-        'cantidadGente': _peopleCountController.text,
-        'cantidadCuadrillas': _crewCountController.text,
-        'totalBins': _binsCountController.text,
-        'fecha': _dateController.text,
-      };
-      widget.onSave(cosecha);
-    }
+  if (_formKey.currentState!.validate()) {
+    final cosecha = {
+      'uuid':_uuid, 
+      'fruta': _selectedFruit,
+      'variedad': _varietyController.text,
+      'codigoHuerto': _orchardCodeController.text,
+      'contratista': _contractorController.text,
+      'cantidadGente': _peopleCountController.text,
+      'cantidadCuadrillas': _crewCountController.text,
+      'totalBins': _binsCountController.text,
+      'fecha': _dateController.text,
+    };
+    widget.onSave(cosecha);
   }
+}
+
 
   @override
   Widget build(BuildContext context) {

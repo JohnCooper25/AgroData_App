@@ -40,7 +40,7 @@ class _HarvestDetailPageState extends State<HarvestDetailPage> {
 
         // Añadir (editado) al nombre fruta si no está
         if (!(_cosechaEditable['fruta'] ?? '').toString().contains('(editado)')) {
-          _cosechaEditable['fruta'] = '${_cosechaEditable['fruta']} (editado)';
+          _cosechaEditable['fruta'] = '${_cosechaEditable['fruta']} (editado)'; 
         }
       });
 

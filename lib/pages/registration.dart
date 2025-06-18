@@ -2,19 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
-import 'harvest_detail.dart'; 
+import 'harvest_detail.dart';
 
 class RegistrosPage extends StatefulWidget {
-  const RegistrosPage({super.key, required this.title});
-
   final String title;
+  final String? frutaFiltrada;
+
+  const RegistrosPage({super.key, required this.title, this.frutaFiltrada});
 
   @override
   State<RegistrosPage> createState() => RegistrosPageState();
 }
 
 class RegistrosPageState extends State<RegistrosPage> {
-  bool _showCosechas = true;
   List<Map<String, dynamic>> _cosechas = [];
 
   @override
@@ -23,13 +23,31 @@ class RegistrosPageState extends State<RegistrosPage> {
     _loadCosechas();
   }
 
+  @override
+  void didUpdateWidget(covariant RegistrosPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.frutaFiltrada != oldWidget.frutaFiltrada) {
+      _loadCosechas();
+    }
+  }
+
   Future<void> _loadCosechas() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? cosechasJson = prefs.getString('cosechas');
     if (cosechasJson != null) {
       List<dynamic> decoded = jsonDecode(cosechasJson);
+      List<Map<String, dynamic>> allCosechas = List<Map<String, dynamic>>.from(decoded);
       setState(() {
-        _cosechas = List<Map<String, dynamic>>.from(decoded);
+        _cosechas = widget.frutaFiltrada != null
+          ? allCosechas.where((c) {
+              final frutaSinEditado = c['fruta']?.toString().replaceAll(' (editado)', '') ?? '';
+              return frutaSinEditado == widget.frutaFiltrada;
+            }).toList()
+          : allCosechas;
+      });
+    } else {
+      setState(() {
+        _cosechas = [];
       });
     }
   }
@@ -41,18 +59,16 @@ class RegistrosPageState extends State<RegistrosPage> {
   }
 
   void _updateCosecha(Map<String, dynamic> editedCosecha) {
-    final index = _cosechas.indexWhere((c) =>
-      c['fruta'] == editedCosecha['fruta'] &&  // o algún identificador único si tienes
-      c['fecha'] == editedCosecha['fecha'] // Esto es para tratar de identificar el registro
-    );
-
-    if (index != -1) {
-      setState(() {
-        _cosechas[index] = editedCosecha;
-      });
-      _saveCosechas();
-    }
+  final index = _cosechas.indexWhere((c) => c['uuid'] == editedCosecha['uuid']);
+  if (index != -1) {
+    setState(() {
+      //editedCosecha['editado'] = true;
+      _cosechas[index] = editedCosecha;
+    });
+    _saveCosechas().then((_) => _loadCosechas());  // Recarga la lista
   }
+}
+
 
   Widget _buildCosechasList() {
     if (_cosechas.isEmpty) {
@@ -65,35 +81,31 @@ class RegistrosPageState extends State<RegistrosPage> {
         return Card(
           margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: ListTile(
-            title: Text(cosecha['fruta'] ?? 'Fruta desconocida'),
-            subtitle: Text('Variedad: ${cosecha['variedad'] ?? '-'}\n'
-                'Fecha: ${cosecha['fecha'] ?? '-'}'),
-            onTap: () {
+            title: Text(
+              '${cosecha['fruta'] ?? 'Fruta desconocida'}' +
+              (cosecha['editado'] == true ? ' (editado)' : ''),
+            ),
+            subtitle: Text(
+              'Variedad: ${cosecha['variedad'] ?? '-'}\n'
+              'Fecha: ${cosecha['fecha'] ?? '-'}',
+            ),
+          isThreeLine: true,
+
+            onTap: () async {
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (_) => HarvestDetailPage(
                     cosecha: cosecha,
-                    onUpdate: (editedCosecha) {
-                      _updateCosecha(editedCosecha);
-                    },
+                    onUpdate: _updateCosecha,
                   ),
                 ),
               );
+              await _loadCosechas();
             },
           ),
         );
       },
-    );
-  }
-
-  Widget _buildMantenciones() {
-    return const Center(
-      child: Text(
-        'Sección de mantenciones\nPróximamente...',
-        textAlign: TextAlign.center,
-        style: TextStyle(fontSize: 18, color: Colors.grey),
-      ),
     );
   }
 
@@ -103,59 +115,14 @@ class RegistrosPageState extends State<RegistrosPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text(widget.frutaFiltrada != null
+            ? 'Registros de ${widget.frutaFiltrada}'
+            : widget.title),
         backgroundColor: colorScheme.inversePrimary,
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-            child: Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: _showCosechas
-                          ? colorScheme.primary
-                          : colorScheme.surfaceVariant,
-                      foregroundColor: _showCosechas
-                          ? colorScheme.onPrimary
-                          : colorScheme.onSurfaceVariant,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _showCosechas = true;
-                      });
-                    },
-                    child: const Text('Cosechas'),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: !_showCosechas
-                          ? colorScheme.primary
-                          : colorScheme.surfaceVariant,
-                      foregroundColor: !_showCosechas
-                          ? colorScheme.onPrimary
-                          : colorScheme.onSurfaceVariant,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _showCosechas = false;
-                      });
-                    },
-                    child: const Text('Mantenciones'),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: _showCosechas ? _buildCosechasList() : _buildMantenciones(),
-          ),
-        ],
+      body: RefreshIndicator(
+        onRefresh: _loadCosechas,
+        child: _buildCosechasList(),
       ),
     );
   }
