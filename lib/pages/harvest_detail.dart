@@ -28,7 +28,6 @@ class _HarvestDetailPageState extends State<HarvestDetailPage> {
           onSave: (editedData) {
             Navigator.of(context).pop(editedData);
           },
-          // Para edición podemos pasar datos iniciales (lo añadimos luego)
           initialData: _cosechaEditable,
         ),
       ),

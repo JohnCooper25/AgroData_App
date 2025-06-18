@@ -19,6 +19,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  String _selectedMarca = '';
   int _selectedIndex = 0;
   bool _showHarvestForm = false;
   bool _showMaintenanceForm = false;
@@ -70,18 +71,16 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  void _navigateToMarca(String marca) {
-    Navigator.pop(context);
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => _RegistrosMantencionesPageState(
-          title: 'Mantenciones de $marca',
-          marcaFiltrada: marca,
-        ),
-      ),
-    );
-  }
+ void _navigateToMarca(String marca) {
+  Navigator.pop(context);
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (_) => RegistrosMantencionesPage(marca: marca),
+    ),
+  );
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -113,18 +112,6 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Stack(
         children: [
           Center(child: _widgetOptions[_selectedIndex]),
-          if (_showHarvestForm)
-            Positioned.fill(
-              child: Container(
-                color: Colors.black54,
-                child: Center(
-                  child: SizedBox(
-                    width: 400,
-                    child: HarvestForm(onSave: _saveHarvest),
-                  ),
-                ),
-              ),
-            ),
           if (_showMaintenanceForm)
             Positioned.fill(
               child: Container(
@@ -132,7 +119,23 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: Center(
                   child: SizedBox(
                     width: 400,
-                    child: MaintenanceForm(onSave: _saveMaintenance),
+                    child: MaintenanceForm(
+                      onSave: _saveMaintenance,
+                      marca: _selectedMarca, initialData: {},
+                    ),
+                  ),
+                ),
+              ),
+            ),
+
+          if (_showMaintenanceForm)
+            Positioned.fill(
+              child: Container(
+                color: Colors.black54,
+                child: Center(
+                  child: SizedBox(
+                    width: 400,
+                    child: MaintenanceForm(onSave: _saveMaintenance, initialData: {}, marca: '',),
                   ),
                 ),
               ),
@@ -189,18 +192,31 @@ class _MyHomePageState extends State<MyHomePage> {
                   ],
                 ),
                 ExpansionTile(
-                  title: const Text('Mantenciones'),
-                  children: [
-                    ListTile(
-                      title: const Text('Deutz Fahr'),
-                      onTap: () => _navigateToMarca('Deutz Fahr'),
-                    ),
-                    ListTile(
-                      title: const Text('Kubota'),
-                      onTap: () => _navigateToMarca('Kubota'),
-                    ),
-                  ],
-                ),
+                title: const Text('Mantenciones'),
+                children: [
+                  ListTile(
+                    title: const Text('Nueva mantención Deutz Fahr'),
+                    onTap: () {
+                      Navigator.pop(context);
+                      setState(() {
+                        _showMaintenanceForm = true;
+                        _selectedMarca = 'Deutz Fahr';
+                      });
+                    },
+                  ),
+                  ListTile(
+                    title: const Text('Nueva mantención Kubota'),
+                    onTap: () {
+                      Navigator.pop(context);
+                      setState(() {
+                        _showMaintenanceForm = true;
+                        _selectedMarca = 'Kubota';
+                      });
+                    },
+                  ),
+                ],
+              ),
+
               ],
             ),
           ],

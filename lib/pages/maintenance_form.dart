@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 
 class MaintenanceForm extends StatefulWidget {
   final void Function(Map<String, dynamic>) onSave;
+  final Map<String, dynamic> initialData;
+  final String marca;
 
-  const MaintenanceForm({super.key, required this.onSave, required Map<String, dynamic> initialData});
-
+  const MaintenanceForm({super.key, required this.onSave, required this.initialData, required this.marca});
   @override
   State<MaintenanceForm> createState() => _MaintenanceFormState();
 }
@@ -28,8 +29,9 @@ class _MaintenanceFormState extends State<MaintenanceForm> {
 
   void _saveForm() {
     if (_formKey.currentState!.validate()) {
-      final mantenimiento = {
-        'marca' : _selectedBrand,
+            final mantenimiento = {
+        'uuid': DateTime.now().millisecondsSinceEpoch.toString(),
+        'marca': widget.marca, // ← esto es clave
         'modelo': _modelController.text,
         'codigo': _codeController.text,
         'mantenciones': _checklist,

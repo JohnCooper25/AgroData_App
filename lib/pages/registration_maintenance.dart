@@ -45,8 +45,6 @@ class _RegistrosMantencionesPageState extends State<RegistrosMantencionesPage> {
       setState(() {
         _mantenciones[index] = updated;
       });
-
-      // Guardar toda la lista completa de nuevo en SharedPreferences
       _saveMantenciones([..._mantenciones]);
     }
   }
