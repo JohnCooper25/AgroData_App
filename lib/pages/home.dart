@@ -49,7 +49,6 @@ class _MyHomePageState extends State<MyHomePage> {
   String? existing = prefs.getString('mantenciones');
   List<dynamic> mantenciones = existing != null ? jsonDecode(existing) : [];
 
-  newMaintenance['marca'] = _selectedMarca;
   newMaintenance['uuid'] ??= DateTime.now().millisecondsSinceEpoch.toString();
 
   print('Guardando mantención: $newMaintenance');  // DEBUG
@@ -59,7 +58,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   setState(() {
     _showMaintenanceForm = false;
-    _selectedMarca = '';
   });
 }
 
@@ -138,7 +136,6 @@ class _MyHomePageState extends State<MyHomePage> {
                     child: MaintenanceForm(
                     onSave: _saveMaintenance,
                     initialData: {},
-                    marca: _selectedMarca,
                   ),
                   ),
                 ),
@@ -233,16 +230,15 @@ class _MyHomePageState extends State<MyHomePage> {
                             },
                           ),
                           ListTile(
-                            leading: const Icon(Icons.build),
-                            title: const Text('Nueva Mantención'),
-                            onTap: () {
-                              Navigator.pop(context);
-                              setState(() {
-                                _selectedMarca = '';
-                                _showMaintenanceForm = true;
-                              });
-                            },
-                          ),
+                          leading: const Icon(Icons.build),
+                          title: const Text('Nueva Mantención'),
+                          onTap: () {
+                            Navigator.pop(context);
+                            setState(() {
+                              _showMaintenanceForm = true;
+                            });
+                          },
+                        ),
                         ],
                       ),
                     );

@@ -25,29 +25,28 @@ class _MaintenanceDetailPageState extends State<MaintenanceDetailPage> {
     _mantencionEditable = Map<String, dynamic>.from(widget.mantencion);
   }
 
-  Future<void> _editarRegistro() async {
-    final resultado = await Navigator.of(context).push<Map<String, dynamic>>(
-      MaterialPageRoute(
-        builder: (context) => MaintenanceForm(
-          onSave: (editedData) {
-            Navigator.of(context).pop(editedData);
-          },
-          initialData: _mantencionEditable,
-          marca: _mantencionEditable['marca'] ?? '', // Usa la marca guardada si existe
-        ),
+ Future<void> _editarRegistro() async {
+  final resultado = await Navigator.of(context).push<Map<String, dynamic>>(
+    MaterialPageRoute(
+      builder: (context) => MaintenanceForm(
+        onSave: (editedData) {
+          Navigator.of(context).pop(editedData);
+        },
+        initialData: _mantencionEditable,
       ),
-    );
+    ),
+  );
 
-    if (resultado != null) {
-      setState(() {
-        _mantencionEditable = Map<String, dynamic>.from(resultado);
-      });
+  if (resultado != null) {
+    setState(() {
+      _mantencionEditable = Map<String, dynamic>.from(resultado);
+    });
 
-      if (widget.onUpdate != null) {
-        widget.onUpdate!(_mantencionEditable);
-      }
+    if (widget.onUpdate != null) {
+      widget.onUpdate!(_mantencionEditable);
     }
   }
+}
 
   Widget _buildReadOnlyField(String label, dynamic value) {
     return Padding(

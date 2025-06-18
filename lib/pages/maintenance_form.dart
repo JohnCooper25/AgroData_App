@@ -3,9 +3,13 @@ import 'package:flutter/material.dart';
 class MaintenanceForm extends StatefulWidget {
   final void Function(Map<String, dynamic>) onSave;
   final Map<String, dynamic> initialData;
-  final String marca;
 
-  const MaintenanceForm({super.key, required this.onSave, required this.initialData, required this.marca});
+  const MaintenanceForm({
+    super.key,
+    required this.onSave,
+    required this.initialData,
+  });
+
   @override
   State<MaintenanceForm> createState() => _MaintenanceFormState();
 }
@@ -14,12 +18,14 @@ class _MaintenanceFormState extends State<MaintenanceForm> {
   late String _selectedBrand;
   final _formKey = GlobalKey<FormState>();
 
-  final _modelController = TextEditingController();
-  final _codeController = TextEditingController();
-  final _extraRepairsController = TextEditingController();
-  final _mechanicController = TextEditingController();
+  late TextEditingController _modelController;
+  late TextEditingController _codeController;
+  late TextEditingController _extraRepairsController;
+  late TextEditingController _mechanicController;
 
-  final Map<String, bool> _checklist = {
+  late Map<String, bool> _checklist;
+
+  final Map<String, bool> _defaultChecklist = {
     'Filtro de aceite de motor': false,
     'Filtro de aire EXT': false,
     'Filtro de aire INT': false,
@@ -30,13 +36,39 @@ class _MaintenanceFormState extends State<MaintenanceForm> {
   @override
   void initState() {
     super.initState();
-    _selectedBrand = widget.marca.isNotEmpty ? widget.marca : 'Deutz Fahr';
+
+    // Inicializar marca
+    _selectedBrand = widget.initialData['marca'] ?? 'Deutz Fahr';
+
+    // Inicializar checklist con datos o default
+    final savedChecklist = widget.initialData['mantenciones'];
+    if (savedChecklist != null && savedChecklist is Map<String, dynamic>) {
+      _checklist = Map<String, bool>.from(
+          savedChecklist.map((key, value) => MapEntry(key, value == true)));
+    } else {
+      _checklist = Map<String, bool>.from(_defaultChecklist);
+    }
+
+    // Inicializar controladores con datos o vacíos
+    _modelController = TextEditingController(text: widget.initialData['modelo'] ?? '');
+    _codeController = TextEditingController(text: widget.initialData['codigo'] ?? '');
+    _extraRepairsController = TextEditingController(text: widget.initialData['reparacionesExtras'] ?? '');
+    _mechanicController = TextEditingController(text: widget.initialData['mecanico'] ?? '');
+  }
+
+  @override
+  void dispose() {
+    _modelController.dispose();
+    _codeController.dispose();
+    _extraRepairsController.dispose();
+    _mechanicController.dispose();
+    super.dispose();
   }
 
   void _saveForm() {
     if (_formKey.currentState!.validate()) {
       final mantenimiento = {
-        'uuid': DateTime.now().millisecondsSinceEpoch.toString(),
+        'uuid': widget.initialData['uuid'] ?? DateTime.now().millisecondsSinceEpoch.toString(),
         'marca': _selectedBrand,
         'modelo': _modelController.text,
         'codigo': _codeController.text,
