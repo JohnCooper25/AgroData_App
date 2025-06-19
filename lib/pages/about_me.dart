@@ -46,7 +46,7 @@ class _AboutMePageState extends State<AboutMePage> {
 
   Future<void> _loadQuestions() async {
     try {
-      final String response = await rootBundle.loadString('assets/feedback_questions.json');
+      final String response = await rootBundle.loadString('assets/data/feedback_questions.json');
       final Map<String, dynamic> data = json.decode(response);
 
       final questionsMap = data.map((key, value) {
