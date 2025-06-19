@@ -7,7 +7,8 @@ class MaintenanceForm extends StatefulWidget {
   const MaintenanceForm({
     super.key,
     required this.onSave,
-    required this.initialData, required marca,
+    required this.initialData,
+    required marca,
   });
 
   @override
@@ -20,6 +21,7 @@ class _MaintenanceFormState extends State<MaintenanceForm> {
 
   late TextEditingController _modelController;
   late TextEditingController _codeController;
+  late TextEditingController _horometroController;
   late TextEditingController _extraRepairsController;
   late TextEditingController _mechanicController;
 
@@ -44,7 +46,7 @@ class _MaintenanceFormState extends State<MaintenanceForm> {
     final savedChecklist = widget.initialData['mantenciones'];
     if (savedChecklist != null && savedChecklist is Map<String, dynamic>) {
       _checklist = Map<String, bool>.from(
-          savedChecklist.map((key, value) => MapEntry(key, value == true)));
+        savedChecklist.map((key, value) => MapEntry(key, value == true)));
     } else {
       _checklist = Map<String, bool>.from(_defaultChecklist);
     }
@@ -52,6 +54,7 @@ class _MaintenanceFormState extends State<MaintenanceForm> {
     // Inicializar controladores con datos o vacíos
     _modelController = TextEditingController(text: widget.initialData['modelo'] ?? '');
     _codeController = TextEditingController(text: widget.initialData['codigo'] ?? '');
+    _horometroController = TextEditingController(text: widget.initialData['horometro'] ?? '');
     _extraRepairsController = TextEditingController(text: widget.initialData['reparacionesExtras'] ?? '');
     _mechanicController = TextEditingController(text: widget.initialData['mecanico'] ?? '');
   }
@@ -60,6 +63,7 @@ class _MaintenanceFormState extends State<MaintenanceForm> {
   void dispose() {
     _modelController.dispose();
     _codeController.dispose();
+    _horometroController.dispose();
     _extraRepairsController.dispose();
     _mechanicController.dispose();
     super.dispose();
@@ -72,6 +76,7 @@ class _MaintenanceFormState extends State<MaintenanceForm> {
         'marca': _selectedBrand,
         'modelo': _modelController.text,
         'codigo': _codeController.text,
+        'horometro': _horometroController.text,
         'mantenciones': _checklist,
         'reparacionesExtras': _extraRepairsController.text,
         'mecanico': _mechanicController.text,
@@ -149,11 +154,21 @@ class _MaintenanceFormState extends State<MaintenanceForm> {
                   controller: _modelController,
                   decoration: const InputDecoration(labelText: 'Modelo de maquinaria'),
                   validator: (value) =>
-                      value == null || value.isEmpty ? 'Ingrese el modelo' : null,
+                    value == null || value.isEmpty ? 'Ingrese el modelo' : null,
                 ),
                 TextFormField(
                   controller: _codeController,
                   decoration: const InputDecoration(labelText: 'Código de maquinaria'),
+                ),
+                TextFormField(
+                  controller: _horometroController,
+                  decoration: const InputDecoration(labelText: 'Horómetro (hrs)'),
+                  keyboardType: TextInputType.number,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) return 'Ingrese el horómetro';
+                    if (double.tryParse(value) == null) return 'Debe ser un número válido';
+                    return null;
+                  },
                 ),
                 const SizedBox(height: 24),
                 const Text(
@@ -161,14 +176,14 @@ class _MaintenanceFormState extends State<MaintenanceForm> {
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 ..._checklist.keys.map((item) => CheckboxListTile(
-                      title: Text(item),
-                      value: _checklist[item],
-                      onChanged: (bool? value) {
-                        setState(() {
-                          _checklist[item] = value ?? false;
-                        });
-                      },
-                    )),
+                  title: Text(item),
+                  value: _checklist[item],
+                  onChanged: (bool? value) {
+                    setState(() {
+                      _checklist[item] = value ?? false;
+                    });
+                  },
+                )),
                 const SizedBox(height: 16),
                 const Text('Reparaciones extras:'),
                 TextFormField(

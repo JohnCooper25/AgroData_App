@@ -109,6 +109,7 @@ class _MaintenanceDetailPageState extends State<MaintenanceDetailPage> {
             _buildReadOnlyField('Marca', _mantencionEditable['marca']),
             _buildReadOnlyField('Modelo', _mantencionEditable['modelo']),
             _buildReadOnlyField('Código', _mantencionEditable['codigo']),
+            _buildReadOnlyField('Horómetro (hrs)', _mantencionEditable['horometro']),
             const SizedBox(height: 16),
             const Text(
               'Mantenciones realizadas:',
