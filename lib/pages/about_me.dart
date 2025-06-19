@@ -139,22 +139,25 @@ class _AboutMePageState extends State<AboutMePage> {
   }
 
   Future<void> _sendFeedback() async {
-    if (!_validate()) return;
+  if (!_validate()) return;
 
-    final subject = Uri.encodeComponent('Feedback de la App AgroData');
-    final body = Uri.encodeComponent(_buildEmailBody());
-    final email = 'jluiscatalan1@gmail.com'; // <- Cambia al correo del desarrollador
+  final Uri mailtoUri = Uri(
+    scheme: 'mailto',
+    path: 'jluiscatalan1@gmail.com',
+    queryParameters: {
+      'subject': 'Feedback de la App AgroData',
+      'body': _buildEmailBody(),
+    },
+  );
 
-    final mailtoLink = 'mailto:$email?subject=$subject&body=$body';
-
-    if (await canLaunch(mailtoLink)) {
-      await launch(mailtoLink);
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No se pudo abrir la aplicación de correo')),
-      );
-    }
+  if (await canLaunchUrl(mailtoUri)) {
+    await launchUrl(mailtoUri);
+  } else {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('No se pudo abrir la aplicación de correo')),
+    );
   }
+}
 
   @override
   void dispose() {
@@ -176,7 +179,7 @@ class _AboutMePageState extends State<AboutMePage> {
                 children: [
                   Text('AgroData', style: titleStyle),
                   const SizedBox(height: 8),
-                  const Text('Desarrollado por: Juan Pérez\nContacto: juan.perez@email.com\n\nAplicación para gestionar cosechas y mantenciones con facilidad y eficiencia.'),
+                  const Text('Desarrollado por: Jonathan Catalan M\nContacto: jluiscatalan1@gmail.com\n\nAgroData es una aplicacion dedicada a la creacion y respaldo de registros para cosechas y mantencion de maquinaria.'),
                   const Divider(height: 32),
                   const Text('Tu opinión nos importa. Por favor completa la siguiente retroalimentación:'),
                   const SizedBox(height: 8),
