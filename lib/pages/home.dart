@@ -8,6 +8,7 @@ import 'maintenance_form.dart';
 import 'package:AgroData/harvest_form.dart';
 import 'registration.dart';
 import 'profile.dart';
+import 'preferences.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -135,7 +136,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     width: 400,
                     child: MaintenanceForm(
                     onSave: _saveMaintenance,
-                    initialData: {},
+                    initialData: {}, marca: null,
                   ),
                   ),
                 ),
@@ -144,72 +145,83 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
       drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            DrawerHeader(
-              decoration: BoxDecoration(color: colorScheme.primaryContainer),
-              child: Text(
-                'Menú',
-                style: textTheme.headlineSmall?.copyWith(
-                  color: colorScheme.onPrimaryContainer,
-                ),
-              ),
-            ),
-            ListTile(
-              title: const Text('Home'),
-              selected: _selectedIndex == 0,
-              onTap: () {
-                _onItemTapped(0);
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              title: const Text('Perfil de Usuario'),
-              selected: _selectedIndex == 1,
-              onTap: () {
-                _onItemTapped(1);
-                Navigator.pop(context);
-              },
-            ),
-            ExpansionTile(
-              title: const Text('Registros'),
+            child: ListView(
+              padding: EdgeInsets.zero,
               children: [
-                ExpansionTile(
-                  title: const Text('Cosechas'),
-                  children: [
-                    ListTile(
-                      title: const Text('Ciruela'),
-                      onTap: () => _navigateToFruta('Ciruela'),
+                DrawerHeader(
+                  decoration: BoxDecoration(color: colorScheme.primaryContainer),
+                  child: Text(
+                    'Menú',
+                    style: textTheme.headlineSmall?.copyWith(
+                      color: colorScheme.onPrimaryContainer,
                     ),
-                    ListTile(
-                      title: const Text('Pera'),
-                      onTap: () => _navigateToFruta('Pera'),
-                    ),
-                    ListTile(
-                      title: const Text('Naranja'),
-                      onTap: () => _navigateToFruta('Naranja'),
-                    ),
-                  ],
+                  ),
+                ),
+                ListTile(
+                  title: const Text('Home'),
+                  selected: _selectedIndex == 0,
+                  onTap: () {
+                    _onItemTapped(0);
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  title: const Text('Perfil de Usuario'),
+                  selected: _selectedIndex == 1,
+                  onTap: () {
+                    _onItemTapped(1);
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  title: const Text('Preferencias'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const PreferencesPage()),
+                    );
+                  },
                 ),
                 ExpansionTile(
-                  title: const Text('Mantenciones'),
+                  title: const Text('Registros'),
                   children: [
-                    ListTile(
-                      title: const Text('Deutz Fahr'),
-                      onTap: () => _navigateToMarca('Deutz Fahr'),
+                    ExpansionTile(
+                      title: const Text('Cosechas'),
+                      children: [
+                        ListTile(
+                          title: const Text('Ciruela'),
+                          onTap: () => _navigateToFruta('Ciruela'),
+                        ),
+                        ListTile(
+                          title: const Text('Pera'),
+                          onTap: () => _navigateToFruta('Pera'),
+                        ),
+                        ListTile(
+                          title: const Text('Naranja'),
+                          onTap: () => _navigateToFruta('Naranja'),
+                        ),
+                      ],
                     ),
-                    ListTile(
-                      title: const Text('Kubota'),
-                      onTap: () => _navigateToMarca('Kubota'),
+                    ExpansionTile(
+                      title: const Text('Mantenciones'),
+                      children: [
+                        ListTile(
+                          title: const Text('Deutz Fahr'),
+                          onTap: () => _navigateToMarca('Deutz Fahr'),
+                        ),
+                        ListTile(
+                          title: const Text('Kubota'),
+                          onTap: () => _navigateToMarca('Kubota'),
+                        ),
+                      ],
                     ),
                   ],
                 ),
               ],
             ),
-          ],
-        ),
-      ),
+          ),
+
       floatingActionButton: (_selectedIndex == 0 && !_showHarvestForm && !_showMaintenanceForm)
           ? FloatingActionButton(
               onPressed: () {

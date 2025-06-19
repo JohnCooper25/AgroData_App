@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:AgroData/harvest_form.dart';
 
 class HarvestDetailPage extends StatefulWidget {
@@ -13,12 +14,20 @@ class HarvestDetailPage extends StatefulWidget {
 
 class _HarvestDetailPageState extends State<HarvestDetailPage> {
   late Map<String, dynamic> _cosechaEditable;
+  bool _allowEdits = true;
 
   @override
   void initState() {
     super.initState();
-    // Copiamos los datos para editar localmente
     _cosechaEditable = Map<String, dynamic>.from(widget.cosecha);
+    _loadEditPreference();
+  }
+
+  Future<void> _loadEditPreference() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _allowEdits = prefs.getBool('allow_edits') ?? true;
+    });
   }
 
   Future<void> _editarRegistro() async {
@@ -37,13 +46,11 @@ class _HarvestDetailPageState extends State<HarvestDetailPage> {
       setState(() {
         _cosechaEditable = Map<String, dynamic>.from(resultado);
 
-        // Añadir (editado) al nombre fruta si no está
         if (!(_cosechaEditable['fruta'] ?? '').toString().contains('(editado)')) {
-          _cosechaEditable['fruta'] = '${_cosechaEditable['fruta']} (editado)'; 
+          _cosechaEditable['fruta'] = '${_cosechaEditable['fruta']} (editado)';
         }
       });
 
-      // Comunicar al padre que se actualizó (si se pasó función)
       if (widget.onUpdate != null) {
         widget.onUpdate!(_cosechaEditable);
       }
@@ -70,11 +77,12 @@ class _HarvestDetailPageState extends State<HarvestDetailPage> {
       appBar: AppBar(
         title: const Text('Detalle de Cosecha'),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.edit),
-            tooltip: 'Editar registro',
-            onPressed: _editarRegistro,
-          ),
+          if (_allowEdits)
+            IconButton(
+              icon: const Icon(Icons.edit),
+              tooltip: 'Editar registro',
+              onPressed: _editarRegistro,
+            ),
         ],
       ),
       body: Padding(

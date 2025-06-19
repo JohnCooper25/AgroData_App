@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'maintenance_form.dart';
 
 class MaintenanceDetailPage extends StatefulWidget {
@@ -17,36 +18,45 @@ class MaintenanceDetailPage extends StatefulWidget {
 
 class _MaintenanceDetailPageState extends State<MaintenanceDetailPage> {
   late Map<String, dynamic> _mantencionEditable;
+  bool _allowEdits = true;
 
   @override
   void initState() {
     super.initState();
-    // Copiamos localmente para editar sin alterar el original directamente
     _mantencionEditable = Map<String, dynamic>.from(widget.mantencion);
+    _loadEditPreference();
   }
 
- Future<void> _editarRegistro() async {
-  final resultado = await Navigator.of(context).push<Map<String, dynamic>>(
-    MaterialPageRoute(
-      builder: (context) => MaintenanceForm(
-        onSave: (editedData) {
-          Navigator.of(context).pop(editedData);
-        },
-        initialData: _mantencionEditable,
-      ),
-    ),
-  );
-
-  if (resultado != null) {
+  Future<void> _loadEditPreference() async {
+    final prefs = await SharedPreferences.getInstance();
     setState(() {
-      _mantencionEditable = Map<String, dynamic>.from(resultado);
+      _allowEdits = prefs.getBool('allow_edits') ?? true;
     });
+  }
 
-    if (widget.onUpdate != null) {
-      widget.onUpdate!(_mantencionEditable);
+  Future<void> _editarRegistro() async {
+    final resultado = await Navigator.of(context).push<Map<String, dynamic>>(
+      MaterialPageRoute(
+        builder: (context) => MaintenanceForm(
+          onSave: (editedData) {
+            Navigator.of(context).pop(editedData);
+          },
+          initialData: _mantencionEditable,
+          marca: _mantencionEditable['marca'] ?? 'Desconocida',
+        ),
+      ),
+    );
+
+    if (resultado != null) {
+      setState(() {
+        _mantencionEditable = Map<String, dynamic>.from(resultado);
+      });
+
+      if (widget.onUpdate != null) {
+        widget.onUpdate!(_mantencionEditable);
+      }
     }
   }
-}
 
   Widget _buildReadOnlyField(String label, dynamic value) {
     return Padding(
@@ -84,11 +94,12 @@ class _MaintenanceDetailPageState extends State<MaintenanceDetailPage> {
       appBar: AppBar(
         title: const Text('Detalle de Mantención'),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.edit),
-            tooltip: 'Editar registro',
-            onPressed: _editarRegistro,
-          ),
+          if (_allowEdits)
+            IconButton(
+              icon: const Icon(Icons.edit),
+              tooltip: 'Editar registro',
+              onPressed: _editarRegistro,
+            ),
         ],
       ),
       body: Padding(
