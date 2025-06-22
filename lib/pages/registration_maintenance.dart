@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
 import 'dart:convert';
 
 import 'maintenance_detail.dart';
+import '../provider/app_data.dart';
 
 class RegistrosMantencionesPage extends StatefulWidget {
   final String marca; // 'Deutz Fahr' o 'Kubota'
@@ -28,10 +30,8 @@ class _RegistrosMantencionesPageState extends State<RegistrosMantencionesPage> {
     if (data != null) {
       final List<dynamic> decoded = jsonDecode(data);
       final all = List<Map<String, dynamic>>.from(decoded);
-      print('Todos los registros: $all'); // DEBUG
       setState(() {
         _mantenciones = all.where((m) => m['marca'] == widget.marca).toList();
-        print('Registros filtrados para marca ${widget.marca}: $_mantenciones'); // DEBUG
       });
     }
   }
@@ -52,6 +52,14 @@ class _RegistrosMantencionesPageState extends State<RegistrosMantencionesPage> {
   }
 
   Future<void> _deleteMantencion(String uuid) async {
+    final appData = context.read<AppData>();
+    if (!appData.allowDelete) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('La eliminación de registros está deshabilitada en preferencias.')),
+      );
+      return;
+    }
+
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(

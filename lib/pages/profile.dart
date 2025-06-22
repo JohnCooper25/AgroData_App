@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
+import '../provider/app_data.dart';
 
 class MyProfilePage extends StatefulWidget {
   const MyProfilePage({super.key, required this.title});
@@ -13,8 +14,8 @@ class MyProfilePage extends StatefulWidget {
 class _MyProfileState extends State<MyProfilePage> {
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
-
-  String _selectedHuerto = 'Agricola La Rosa';
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _administrationController = TextEditingController();
 
   final List<String> _huertos = [
     'Agricola La Rosa',
@@ -22,50 +23,32 @@ class _MyProfileState extends State<MyProfilePage> {
     'Cornellana',
   ];
 
+  String? _selectedHuerto;
+
   @override
-  void initState() {
-    super.initState();
-    _loadData();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final appData = Provider.of<AppData>(context);
+    _nameController.text = appData.userName;
+    _phoneController.text = appData.phoneNumber;
+    _selectedHuerto = appData.selectedHuerto;
+    _emailController.text = appData.email;
+    _administrationController.text = appData.administration;
   }
 
-  Future<void> _loadData() async {
-    final prefs = await SharedPreferences.getInstance();
-    String? savedPhone = prefs.getString('phoneNumber');
-    String? savedHuerto = prefs.getString('huerto');
-    String? savedName = prefs.getString('userName');
-
-    if (savedPhone != null) {
-      _phoneController.text = savedPhone;
-    }
-    if (savedHuerto != null && _huertos.contains(savedHuerto)) {
-      setState(() {
-        _selectedHuerto = savedHuerto;
-      });
-    }
-    if (savedName != null) {
-      _nameController.text = savedName;
-    } else {
-      _nameController.text = "Jonathan Catalan"; // Valor por defecto
-    }
-  }
-
-  Future<void> _savePhone(String phone) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('phoneNumber', phone);
-  }
-
-  Future<void> _saveHuerto(String huerto) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('huerto', huerto);
-  }
-
-  Future<void> _saveName(String name) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('userName', name);
+  @override
+  void dispose() {
+    _phoneController.dispose();
+    _nameController.dispose();
+    _emailController.dispose();
+    _administrationController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final appData = Provider.of<AppData>(context);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -87,7 +70,7 @@ class _MyProfileState extends State<MyProfilePage> {
             ),
             const SizedBox(height: 20),
 
-            // Campo editable para el nombre
+            // Nombre de usuario
             TextField(
               controller: _nameController,
               decoration: const InputDecoration(
@@ -96,13 +79,13 @@ class _MyProfileState extends State<MyProfilePage> {
                 prefixIcon: Icon(Icons.person),
               ),
               onChanged: (value) {
-                _saveName(value);
+                appData.setUserName(value);
               },
             ),
 
             const SizedBox(height: 10),
 
-            // Dropdown para elegir huerto
+            // Huerto (dropdown)
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -121,14 +104,47 @@ class _MyProfileState extends State<MyProfilePage> {
                       setState(() {
                         _selectedHuerto = newValue;
                       });
-                      _saveHuerto(newValue);
+                      appData.setHuerto(newValue);
                     }
                   },
                 ),
               ],
             ),
 
-            const SizedBox(height: 40),
+            const SizedBox(height: 10),
+
+            // Correo electrónico
+            TextField(
+              controller: _emailController,
+              keyboardType: TextInputType.emailAddress,
+              decoration: const InputDecoration(
+                labelText: 'Correo electrónico',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.email),
+              ),
+              onChanged: (value) {
+                appData.setEmail(value);
+              },
+            ),
+
+            const SizedBox(height: 10),
+
+            // Administración
+            TextField(
+              controller: _administrationController,
+              decoration: const InputDecoration(
+                labelText: 'Administración',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.business),
+              ),
+              onChanged: (value) {
+                appData.setAdministracion(value);
+              },
+            ),
+
+            const SizedBox(height: 10),
+
+            // Número de teléfono
             TextField(
               controller: _phoneController,
               keyboardType: TextInputType.phone,
@@ -137,14 +153,17 @@ class _MyProfileState extends State<MyProfilePage> {
                 border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.phone),
               ),
+              onChanged: (value) {
+                appData.setPhoneNumber(value);
+              },
             ),
+
             const SizedBox(height: 20),
+
             ElevatedButton(
               onPressed: () {
-                String phone = _phoneController.text;
-                _savePhone(phone);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Número guardado: $phone')),
+                  SnackBar(content: Text('Datos guardados')),
                 );
               },
               child: const Text('Guardar'),

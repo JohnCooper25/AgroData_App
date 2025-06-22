@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
 import 'dart:convert';
 
 import 'harvest_detail.dart';
+import '../provider/app_data.dart';
 
 class RegistrosPage extends StatefulWidget {
   final String title;
@@ -69,6 +71,14 @@ class RegistrosPageState extends State<RegistrosPage> {
   }
 
   Future<void> _deleteCosecha(String uuid) async {
+    final appData = context.read<AppData>();
+    if (!appData.allowDelete) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('La eliminación de registros está deshabilitada en preferencias.')),
+      );
+      return;
+    }
+
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../theme.dart';
+import '../provider/app_data.dart';
 
 class PreferencesPage extends StatefulWidget {
   const PreferencesPage({super.key});
@@ -11,23 +12,21 @@ class PreferencesPage extends StatefulWidget {
 
 class _PreferencesPageState extends State<PreferencesPage> {
   bool _allowEdits = true;
-  bool _darkTheme = true;
 
   @override
   void initState() {
     super.initState();
-    _loadPreferences();
+    _loadAllowEdits();
   }
 
-  Future<void> _loadPreferences() async {
+  Future<void> _loadAllowEdits() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      _allowEdits = prefs.getBool('allow_edits') ?? true; // por defecto: true
-      _darkTheme = prefs.getBool('dark_theme') ?? true; // por defecto: true
+      _allowEdits = prefs.getBool('allow_edits') ?? true;
     });
   }
 
-  Future<void> _toggleEdits(bool newValue) async {
+  Future<void> _toggleAllowEdits(bool newValue) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('allow_edits', newValue);
     setState(() {
@@ -35,20 +34,13 @@ class _PreferencesPageState extends State<PreferencesPage> {
     });
   }
 
-  Future<void> _toggleTheme(bool newValue) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('dark_theme', newValue);
-    setState(() {
-      _darkTheme = newValue;
-    });
-    Future.delayed(const Duration(milliseconds: 300), () {
-      Navigator.of(context).pop();
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final appData = Provider.of<AppData>(context);
+    final isDark = appData.themeMode == ThemeMode.dark;
+    final allowDelete = appData.allowDelete;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Preferencias'),
@@ -60,13 +52,23 @@ class _PreferencesPageState extends State<PreferencesPage> {
             title: const Text('Permitir edición de registros'),
             subtitle: const Text('Activa o desactiva la posibilidad de editar registros existentes.'),
             value: _allowEdits,
-            onChanged: _toggleEdits,
+            onChanged: _toggleAllowEdits,
           ),
           SwitchListTile(
             title: const Text('Tema oscuro'),
             subtitle: const Text('Activa o desactiva el modo oscuro en la app.'),
-            value: _darkTheme,
-            onChanged: _toggleTheme,
+            value: isDark,
+            onChanged: (bool value) {
+              appData.toggleTheme(value);
+            },
+          ),
+          SwitchListTile(
+            title: const Text('Permitir eliminación de registros'),
+            subtitle: const Text('Activa o desactiva la posibilidad de borrar registros existentes.'),
+            value: allowDelete,
+            onChanged: (bool value) {
+              appData.toggleAllowDelete(value);
+            },
           ),
         ],
       ),
