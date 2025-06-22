@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../theme.dart';
 
 class PreferencesPage extends StatefulWidget {
   const PreferencesPage({super.key});
@@ -10,6 +11,7 @@ class PreferencesPage extends StatefulWidget {
 
 class _PreferencesPageState extends State<PreferencesPage> {
   bool _allowEdits = true;
+  bool _darkTheme = true;
 
   @override
   void initState() {
@@ -21,6 +23,7 @@ class _PreferencesPageState extends State<PreferencesPage> {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       _allowEdits = prefs.getBool('allow_edits') ?? true; // por defecto: true
+      _darkTheme = prefs.getBool('dark_theme') ?? true; // por defecto: true
     });
   }
 
@@ -29,6 +32,17 @@ class _PreferencesPageState extends State<PreferencesPage> {
     await prefs.setBool('allow_edits', newValue);
     setState(() {
       _allowEdits = newValue;
+    });
+  }
+
+  Future<void> _toggleTheme(bool newValue) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('dark_theme', newValue);
+    setState(() {
+      _darkTheme = newValue;
+    });
+    Future.delayed(const Duration(milliseconds: 300), () {
+      Navigator.of(context).pop();
     });
   }
 
@@ -47,6 +61,12 @@ class _PreferencesPageState extends State<PreferencesPage> {
             subtitle: const Text('Activa o desactiva la posibilidad de editar registros existentes.'),
             value: _allowEdits,
             onChanged: _toggleEdits,
+          ),
+          SwitchListTile(
+            title: const Text('Tema oscuro'),
+            subtitle: const Text('Activa o desactiva el modo oscuro en la app.'),
+            value: _darkTheme,
+            onChanged: _toggleTheme,
           ),
         ],
       ),
