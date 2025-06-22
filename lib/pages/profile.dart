@@ -47,7 +47,9 @@ class _MyProfileState extends State<MyProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+
     final appData = Provider.of<AppData>(context);
+    final bool protect = appData.protectProfileData;
 
     return Scaffold(
       appBar: AppBar(
@@ -73,6 +75,7 @@ class _MyProfileState extends State<MyProfilePage> {
             // Nombre de usuario
             TextField(
               controller: _nameController,
+              enabled: !protect,
               decoration: const InputDecoration(
                 labelText: 'Nombre de usuario',
                 border: OutlineInputBorder(),
@@ -95,18 +98,20 @@ class _MyProfileState extends State<MyProfilePage> {
                 ),
                 DropdownButton<String>(
                   value: _selectedHuerto,
+                  onChanged: protect
+                  ? null
+                  : (String? newValue) {
+                      if (newValue != null) {
+                        setState(() {
+                          _selectedHuerto = newValue;
+                        });
+                        appData.updateHuerto(newValue);
+                      }
+                    },
                   items: _huertos
                       .map((huerto) =>
                           DropdownMenuItem(value: huerto, child: Text(huerto)))
                       .toList(),
-                  onChanged: (String? newValue) {
-                    if (newValue != null) {
-                      setState(() {
-                        _selectedHuerto = newValue;
-                      });
-                      appData.setHuerto(newValue);
-                    }
-                  },
                 ),
               ],
             ),
@@ -161,13 +166,15 @@ class _MyProfileState extends State<MyProfilePage> {
             const SizedBox(height: 20),
 
             ElevatedButton(
-              onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Datos guardados')),
-                );
-              },
-              child: const Text('Guardar'),
-            ),
+            onPressed: protect
+                ? null
+                : () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Datos guardados')),
+                    );
+                  },
+            child: const Text('Guardar'),
+          ),
           ],
         ),
       ),

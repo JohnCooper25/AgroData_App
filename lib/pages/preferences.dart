@@ -70,6 +70,14 @@ class _PreferencesPageState extends State<PreferencesPage> {
               appData.toggleAllowDelete(value);
             },
           ),
+          SwitchListTile(
+          title: const Text('Proteger datos del perfil'),
+          subtitle: const Text('Desactiva esta opción para permitir editar tu información personal.'),
+          value: appData.protectProfileData,
+          onChanged: (bool value) {
+            appData.toggleProtectProfileData(value);
+          },
+        ),
         ],
       ),
     );

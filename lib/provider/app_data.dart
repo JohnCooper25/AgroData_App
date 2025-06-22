@@ -14,6 +14,9 @@ class AppData extends ChangeNotifier {
   bool get allowEdit => _allowEdit;
   bool get allowDelete => _allowDelete;
 
+  bool _protectProfileData = false;
+  bool get protectProfileData => _protectProfileData;
+
   // Datos de perfil
   String _userName = 'Jonathan Catalan';
   String _phoneNumber = '';
@@ -44,6 +47,7 @@ class AppData extends ChangeNotifier {
     _selectedHuerto = prefs.getString('huerto') ?? 'Agricola La Rosa';
     _email = prefs.getString('email') ?? '';
     _administration = prefs.getString('administration') ?? '';
+    _protectProfileData = prefs.getBool('protect_profile_data') ?? false;
 
     notifyListeners();
   }
@@ -70,6 +74,13 @@ class AppData extends ChangeNotifier {
     await prefs.setBool('allow_delete', allow);
     _allowDelete = allow;
     notifyListeners();
+  }
+
+  Future<void> toggleProtectProfileData(bool value) async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.setBool('protect_profile_data', value);
+  _protectProfileData = value;
+  notifyListeners();
   }
 
   // Perfil: nombre
