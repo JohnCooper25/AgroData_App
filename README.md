@@ -94,8 +94,9 @@ https://github.com/JohnCooper25/AgroData_App/blob/main/AgroData.apk
 
 ## 🔗 Repositorio GitHub
 
-Puedes acceder al repositorio completo aquí:
+Puedes acceder al repositorio completo y el video del material aqui:
 
+https://github.com/JohnCooper25/AgroData_App
 
 
 
