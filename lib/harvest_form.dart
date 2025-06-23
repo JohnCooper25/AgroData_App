@@ -23,7 +23,7 @@ class _HarvestFormState extends State<HarvestForm> {
   late TextEditingController _dateController;
   DateTime? _selectedDate;
 
-  late String _uuid; // <-- Nuevo: campo UUID único
+  late String _uuid; // campo UUID
 
   @override
   void initState() {

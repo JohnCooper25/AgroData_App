@@ -51,7 +51,7 @@ class _MaintenanceFormState extends State<MaintenanceForm> {
       _checklist = Map<String, bool>.from(_defaultChecklist);
     }
 
-    // Inicializar controladores con datos o vacíos
+    // Inicializar controladores con datos 
     _modelController = TextEditingController(text: widget.initialData['modelo'] ?? '');
     _codeController = TextEditingController(text: widget.initialData['codigo'] ?? '');
     _horometroController = TextEditingController(text: widget.initialData['horometro'] ?? '');

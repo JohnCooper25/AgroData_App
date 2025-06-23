@@ -60,7 +60,7 @@ class AppData extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Permisos edición
+  // Permisos edicion
   Future<void> toggleAllowEdit(bool allow) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('allow_edits', allow);
@@ -91,7 +91,7 @@ class AppData extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Perfil: teléfono
+  // Perfil: telefono
   Future<void> updatePhoneNumber(String phone) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('phoneNumber', phone);
@@ -115,7 +115,7 @@ class AppData extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Perfil: administración
+  // Perfil: administracion
   Future<void> updateAdministration(String administration) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('administration', administration);

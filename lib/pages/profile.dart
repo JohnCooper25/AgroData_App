@@ -88,7 +88,7 @@ class _MyProfileState extends State<MyProfilePage> {
 
             const SizedBox(height: 10),
 
-            // Huerto (dropdown)
+            
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -118,7 +118,7 @@ class _MyProfileState extends State<MyProfilePage> {
 
             const SizedBox(height: 10),
 
-            // Correo electrónico
+            // Correo electronico
             TextField(
               controller: _emailController,
               keyboardType: TextInputType.emailAddress,
@@ -134,7 +134,7 @@ class _MyProfileState extends State<MyProfilePage> {
 
             const SizedBox(height: 10),
 
-            // Administración
+            // Administracion
             TextField(
               controller: _administrationController,
               decoration: const InputDecoration(
@@ -149,7 +149,7 @@ class _MyProfileState extends State<MyProfilePage> {
 
             const SizedBox(height: 10),
 
-            // Número de teléfono
+            // Número de telefono
             TextField(
               controller: _phoneController,
               keyboardType: TextInputType.phone,

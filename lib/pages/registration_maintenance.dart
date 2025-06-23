@@ -7,7 +7,7 @@ import 'maintenance_detail.dart';
 import '../provider/app_data.dart';
 
 class RegistrosMantencionesPage extends StatefulWidget {
-  final String marca; // 'Deutz Fahr' o 'Kubota'
+  final String marca; 
 
   const RegistrosMantencionesPage({super.key, required this.marca});
 
